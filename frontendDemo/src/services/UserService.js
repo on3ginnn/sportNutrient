@@ -3,7 +3,7 @@ import axios from 'axios';
 export default class UserService{
     static async create(data){
         try {
-            const response = await axios.post('/api/user/create',data);
+            const response = await axios.post('/api/auth/register/',data);
             return response;
         } catch (error) {
             console.log(error);

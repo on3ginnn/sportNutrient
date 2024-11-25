@@ -25,9 +25,13 @@ const Register = observer(()=>{
         <Container>
             <h1>Регистрация</h1>
             <Form onSubmit={submitForm}>
-                <Form.Group>
+            <Form.Group>
                     <Form.Label>Логин</Form.Label>
                     <Form.Control type="text" name="username" value={data.username} onChange={handleChange}/>
+                </Form.Group>
+                <Form.Group>
+                    <Form.Label>Почта</Form.Label>
+                    <Form.Control type="text" name="email" value={data.email} onChange={handleChange}/>
                 </Form.Group>
                 <Form.Group>
                     <Form.Label>Пароль</Form.Label>
@@ -35,7 +39,7 @@ const Register = observer(()=>{
                 </Form.Group>
                 <Row>
                     <Col md={6}>
-                        <Button variant="success" type="submit">Регистрация</Button>
+                        <Button variant="success" type="submit">Зарегаться</Button>
                     </Col>
                 </Row>
             </Form>
