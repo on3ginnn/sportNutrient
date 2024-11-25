@@ -28,7 +28,7 @@ export const publicRoutes = [
     },
     {
         name:'Авторизация',
-        path:'/auth',
+        path:'/login',
         component:Auth
     }
 

@@ -8,7 +8,7 @@ const Header = observer(() => {
     const navigate = useNavigate();
     const logout = ()=>{
         userStore.logout();
-        navigate('/auth');
+        navigate('/login');
     }
     return (
         <Navbar bg="dark" variant="dark" className="p-2 mb-2">
