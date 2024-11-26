@@ -4,9 +4,11 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt import views as jwt_views
 
 
 class RegisterView(APIView):
@@ -18,11 +20,11 @@ class RegisterView(APIView):
 
         # Проверка обязательных полей
         if not username or not password or not email:
-            return Response({"ошибка": "All fields are required."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Все поля обязательны для заполнения."}, status=status.HTTP_400_BAD_REQUEST)
 
         # Проверка уникальности username
         if User.objects.filter(username=username).exists():
-            return Response({"ошибка": "Username already exists."}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"message": "Пользователь с таким ником уже существует."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Создание пользователя
         user = User.objects.create_user(username=username, email=email, password=password)
@@ -37,40 +39,53 @@ class RegisterView(APIView):
         return Response({"message": "User registered successfully", "tokens": tokens}, status=status.HTTP_201_CREATED)
 
 
-class LoginView(APIView):
+class LoginView(jwt_views.TokenObtainPairView):
     def post(self, request):
+        # посмотреть как все работает внутри, мозможно это Token.for_user() -> тогда для верификации verify()
+        res = super().post(request)
+        print(res.__dict__)
         data = request.data
         username = data.get('username')
         password = data.get('password')
 
         # Аутентификация пользователя
-        user = authenticate(username=username, password=password)
-        if not user:
-            return Response({"ошибка": "неверный юзернейм или пароль."}, status=status.HTTP_401_UNAUTHORIZED)
+        # user = JWTAuthentication.authenticate(request)
+        # if not user:
+        #     return Response({"ошибка": "неверный юзернейм или пароль."}, status=status.HTTP_401_UNAUTHORIZED)
 
         # Создание JWT-токенов
-        refresh = RefreshToken.for_user(user)
-        tokens = {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }
-        
-        return Response({"user": {"username": user.username, "email": user.email}, "tokens": tokens}, status=status.HTTP_200_OK)
+        # refresh = RefreshToken.for_user(user)
+        # tokens = {
+        #     'refresh': str(refresh),
+        #     'access': str(refresh.access_token),
+        # }
+
+        # return Response({"user": {"username": user.username, "email": user.email}, "tokens": tokens}, status=status.HTTP_200_OK)
+        return Response({"tokens": res.data}, status=res.status_code)
+        return Response(status=status.HTTP_200_OK)
 
 
-class UserProfileView(APIView):
-    permission_classes = [IsAuthenticated]
+# видимо он ждет передачи через поле, така как на drfsimplejwt так реализовано
+class UserProfileView(jwt_views.TokenVerifyView):
+# class UserProfileView(APIView):
+    # permission_classes = [IsAuthenticated]
 
     # permission_classes = [authenticate]
     def post(self, request):
+        res = super().post(request)
+        print(res)
+        # сделать проверку верификации токена и вернуть юзера
+        # print(res.__dict__)
         data = request.data
         print(data)
-        token = data.get('token')
+        # print(data.get("headers").get('Authorization'))
+        # token = data.get('token')
 
         # нужно верифицировать токен
 
         # вернуть данные в ответ
-        return Response({"token": token}, status=status.HTTP_200_OK)
+        return Response(status=status.HTTP_200_OK)
+        # return Response({"tokens": res.data}, status=status.HTTP_200_OK)
 
 
 class UserListView(APIView):

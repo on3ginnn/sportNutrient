@@ -6,7 +6,7 @@ export default class UserService{
             const response = await axios.post('/api/auth/register/',data);
             return response;
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data.message);
         }
     }
     static async login(data){
@@ -14,12 +14,12 @@ export default class UserService{
             const response = await axios.post('/api/auth/login/',data);
             return response;
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data.message);
         }
     }
     static async profile(){
         try {
-            const response = await axios.post('/api/auth/profile/',{
+            const response = await axios.post('/api/auth/profile/',{},{
                 headers: {
                     'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
                 },
@@ -27,7 +27,7 @@ export default class UserService{
             console.log(response);
             return response;
         } catch (error) {
-            console.log(error);
+            console.log(error.response.data.message);
         }
     }
 }

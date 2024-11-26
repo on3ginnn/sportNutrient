@@ -12,28 +12,28 @@ class UserStore{
             const response = await UserService.create(data);
             console.log(response);
         } catch (error) {
-            console.log(error);
         }
     }
-    async profileUser(data){
+    async profileUser(){
         try {
-            const response = await UserService.profile(data);
+            const response = await UserService.profile();
             console.log(response);
         } catch (error) {
-            console.log(error);
+            
         }
     }
     async loginUser(data){
         try {
             const response = await UserService.login(data);
+            console.log(response.data);
             localStorage.setItem('accessToken',response.data.tokens.refresh);
             localStorage.setItem('auth',true);
             
-            console.log(localStorage)
+            console.log(localStorage);
             // const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
             
         } catch (error) {
-            console.log(error);
+            
         }
     }
     logout(){
