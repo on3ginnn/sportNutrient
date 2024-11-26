@@ -1,6 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
+from rest_framework.generics import GenericAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -9,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
+from rest_framework_simplejwt.tokens import AccessToken
 
 
 class RegisterView(APIView):
@@ -40,53 +42,29 @@ class RegisterView(APIView):
 
 
 class LoginView(jwt_views.TokenObtainPairView):
-    def post(self, request):
+    
+    def post(self, request, *args, **kwargs):
         # посмотреть как все работает внутри, мозможно это Token.for_user() -> тогда для верификации verify()
-        res = super().post(request)
-        print(res.__dict__)
-        data = request.data
-        username = data.get('username')
-        password = data.get('password')
+        response = super().post(request, *args, **kwargs)
+        print(response.__dict__)
 
-        # Аутентификация пользователя
-        # user = JWTAuthentication.authenticate(request)
-        # if not user:
-        #     return Response({"ошибка": "неверный юзернейм или пароль."}, status=status.HTTP_401_UNAUTHORIZED)
-
-        # Создание JWT-токенов
-        # refresh = RefreshToken.for_user(user)
-        # tokens = {
-        #     'refresh': str(refresh),
-        #     'access': str(refresh.access_token),
-        # }
-
-        # return Response({"user": {"username": user.username, "email": user.email}, "tokens": tokens}, status=status.HTTP_200_OK)
-        return Response({"tokens": res.data}, status=res.status_code)
-        return Response(status=status.HTTP_200_OK)
+        return Response({"tokens": response.data}, status=response.status_code)
 
 
-# видимо он ждет передачи через поле, така как на drfsimplejwt так реализовано
-class UserProfileView(jwt_views.TokenVerifyView):
-# class UserProfileView(APIView):
-    # permission_classes = [IsAuthenticated]
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
 
-    # permission_classes = [authenticate]
-    def post(self, request):
-        res = super().post(request)
-        print(res)
-        # сделать проверку верификации токена и вернуть юзера
-        # print(res.__dict__)
-        data = request.data
-        print(data)
-        # print(data.get("headers").get('Authorization'))
-        # token = data.get('token')
+    def get(self, request):
 
-        # нужно верифицировать токен
-
-        # вернуть данные в ответ
-        return Response(status=status.HTTP_200_OK)
-        # return Response({"tokens": res.data}, status=status.HTTP_200_OK)
-
+        print(request.headers)
+        print(request.user)
+        print(request.auth)
+        user = request.user
+        return Response({
+            "username": user.username,
+            "email": user.email
+        }, status=status.HTTP_200_OK)
+    
 
 class UserListView(APIView):
     """

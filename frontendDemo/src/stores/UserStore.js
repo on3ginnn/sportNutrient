@@ -25,9 +25,10 @@ class UserStore{
     async loginUser(data){
         try {
             const response = await UserService.login(data);
-            console.log(response.data);
-            localStorage.setItem('accessToken',response.data.tokens.refresh);
-            localStorage.setItem('auth',true);
+            const { access, refresh } = response.data.tokens;
+
+            localStorage.setItem('accessToken', access);
+            localStorage.setItem('refreshToken', refresh);
             
             console.log(localStorage);
             // const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
@@ -38,7 +39,7 @@ class UserStore{
     }
     logout(){
         localStorage.removeItem('accessToken');
-        localStorage.removeItem('auth');
+        localStorage.removeItem('refreshToken');
     }
 }
 export let userStore = new UserStore();
