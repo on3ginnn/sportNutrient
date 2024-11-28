@@ -1,20 +1,19 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from users.serializer import UserSerializer
 from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView, ListAPIView
+from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from django.shortcuts import get_object_or_404
 from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
-from rest_framework_simplejwt.tokens import AccessToken
 from django.contrib.auth import get_user_model
 
 
-class RegisterView(APIView):
+class UserRegisterAPIView(APIView):
     def post(self, request):
         data = request.data
         username = data.get('username')
@@ -31,18 +30,11 @@ class RegisterView(APIView):
         
         # Создание пользователя
         user = User.objects.create_user(username=username, email=email, password=password)
-        
-        # Создание JWT-токенов
-        refresh = RefreshToken.for_user(user)
-        tokens = {
-            'refresh': str(refresh),
-            'access': str(refresh.access_token),
-        }
-        
-        return Response({"message": "User registered successfully", "tokens": tokens}, status=status.HTTP_201_CREATED)
+               
+        return Response({"message": "Пользователь успешно создан"}, status=status.HTTP_201_CREATED)
 
 
-class LoginView(jwt_views.TokenObtainPairView):
+class UserLoginAPIView(jwt_views.TokenObtainPairView):
     
     def post(self, request, *args, **kwargs):
         # посмотреть как все работает внутри, мозможно это Token.for_user() -> тогда для верификации verify()
@@ -52,7 +44,7 @@ class LoginView(jwt_views.TokenObtainPairView):
         return Response({"tokens": response.data}, status=response.status_code)
 
 
-class UserProfileView(APIView):
+class UserProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
@@ -68,9 +60,11 @@ class UserProfileView(APIView):
     
 
 # class UserListView(APIView):
-class UserListView(ListAPIView):
+class UserListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+
     """
     Получение списка всех пользователей.
     """
@@ -80,36 +74,10 @@ class UserListView(ListAPIView):
     #     return Response(users_data, status=status.HTTP_200_OK)
 
 
-class UserDetailView(APIView):
-    """
-    Получение, обновление и удаление пользователя по ID.
-    """
-    def get(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        user_data = {"id": user.id, "username": user.username, "email": user.email}
-        return Response([user_data], status=status.HTTP_200_OK)
-
-    def patch(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        username = request.data.get('username')
-        email = request.data.get('email')
-        password = request.data.get('password')
-
-        if username:
-            user.username = username
-        if email:
-            user.email = email
-        if password:
-            user.password = make_password(password)  # Хэшируем новый пароль
-
-        user.save()
-        updated_data = {"id": user.id, "username": user.username, "email": user.email}
-        return Response(updated_data, status=status.HTTP_200_OK)
-
-    def delete(self, request, pk):
-        user = get_object_or_404(User, pk=pk)
-        user.delete()
-        return Response({"message": "юзер удален успешно"}, status=status.HTTP_204_NO_CONTENT)
+class UserDetailUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
     
 
 class UserSearchView(APIView):
