@@ -55,4 +55,22 @@ export default class UserService{
             }
         }
     }
+    static async list() {
+        try {
+            const response = await axios.get('/api/auth/users/', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('accessToken')}`
+                }
+            });
+            console.log(response.data);
+            console.log(response.status)
+
+            return response.data;
+        } catch (error) {
+            console.error(error.response.data.message);
+            if (error.response.status === 401) {
+                console.error('Требуется повторный вход в систему');
+            }
+        }
+    }
 }

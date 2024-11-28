@@ -14,6 +14,16 @@ class UserStore{
         } catch (error) {
         }
     }
+    async userList(){
+        try {
+            const response = await UserService.list();
+            console.log(response);
+            console.log(response.data);
+            console.log(response.status);
+            return response;
+        } catch (error) {
+        }
+    }
     async profileUser(){
         try {
             const response = await UserService.profile();
@@ -22,7 +32,6 @@ class UserStore{
             console.log(response.status);
             return response;
         } catch (error) {
-            
         }
     }
     async loginUser(data){
