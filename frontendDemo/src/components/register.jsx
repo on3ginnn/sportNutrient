@@ -7,6 +7,7 @@ const Register = observer(()=>{
     const navigate = useNavigate();
     const [data,setData] = useState({
         username:'',
+        email:'',
         password:''
     });
     const handleChange = (ev)=>{
@@ -19,7 +20,9 @@ const Register = observer(()=>{
 
     const submitForm = async (ev)=>{
         ev.preventDefault();
-        await userStore.addUser(data);
+        if(await userStore.addUser(data)){
+            navigate('/login');
+        }
     }
     return(
         <Container>

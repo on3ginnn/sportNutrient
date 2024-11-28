@@ -8,7 +8,7 @@ const Header = observer(() => {
     const navigate = useNavigate();
     const logout = ()=>{
         userStore.logout();
-        navigate('/login');
+            navigate('/login');
     }
     return (
         <Navbar bg="dark" variant="dark" className="p-2 mb-2">
@@ -17,12 +17,12 @@ const Header = observer(() => {
                 </Navbar.Brand>
             <Nav className="ms-auto">
                 {
-                    userStore.isAuth &&
+                    userStore.accessToken.length!=0 &&
 
                         authRoutes.map((el, i) => <Nav.Link key={i} as={Link} to={el.path}>{el.name}</Nav.Link>) && <Button variant="danger" onClick={logout}>Выйти</Button>
                 }
                         
-                {!userStore.isAuth && publicRoutes.map((el, i) => <Nav.Link key={i} as={Link} to={el.path}>{el.name}</Nav.Link>)}
+                {userStore.accessToken.length==0 && publicRoutes.map((el, i) => <Nav.Link key={i} as={Link} to={el.path}>{el.name}</Nav.Link>)}
             </Nav>
         </Navbar>
     )

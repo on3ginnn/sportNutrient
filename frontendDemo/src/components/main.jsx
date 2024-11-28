@@ -7,8 +7,8 @@ const Main = observer(()=>{
 
     return(
         <Routes>
-            {!userStore.isAuth && publicRoutes.map((el,i)=><Route key={i} path={el.path} Component={el.component}/>)}
-            {userStore.isAuth && authRoutes.map((el,i)=><Route key={i} path={el.path} Component={el.component}/>)}
+            {userStore.accessToken.length==0 && publicRoutes.map((el,i)=><Route key={i} path={el.path} Component={el.component}/>)}
+            {userStore.accessToken.length!=0 && authRoutes.map((el,i)=><Route key={i} path={el.path} Component={el.component}/>)}
         </Routes>
     )
 })

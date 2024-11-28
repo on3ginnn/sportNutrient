@@ -22,6 +22,7 @@ const Auth = observer(()=>{
         await userStore.loginUser(data).then(()=>{
             navigate('/profile');
         });
+
     }
     return(
         <Container>

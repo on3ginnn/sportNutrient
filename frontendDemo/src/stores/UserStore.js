@@ -2,8 +2,8 @@ import {makeAutoObservable} from 'mobx';
 import UserService from '../services/UserService';
 
 class UserStore{
-    isAuth = localStorage.getItem('auth') || false;
-    token = localStorage.getItem('accessToken') || '';
+    isAuth = localStorage.getItem('isAuth') || false;
+    accessToken = localStorage.getItem('accessToken') || '';
     constructor(){
         makeAutoObservable(this);
     }
@@ -18,6 +18,7 @@ class UserStore{
         try {
             const response = await UserService.profile();
             console.log(response);
+            return response;
         } catch (error) {
             
         }
@@ -29,8 +30,9 @@ class UserStore{
 
             localStorage.setItem('accessToken', access);
             localStorage.setItem('refreshToken', refresh);
-            
-            console.log(localStorage);
+            localStorage.setItem('isAuth', true);
+            this.accessToken = localStorage.getItem('accessToken');
+            console.log(this.accessToken);
             // const [cookies, setCookie, removeCookie] = useCookies(['cookie-name']);
             
         } catch (error) {
@@ -40,6 +42,8 @@ class UserStore{
     logout(){
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
+        localStorage.removeItem('isAuth');
+        this.accessToken = '';
     }
 }
 export let userStore = new UserStore();
