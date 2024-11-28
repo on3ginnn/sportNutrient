@@ -1,7 +1,7 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
 from rest_framework.views import APIView
-from rest_framework.generics import GenericAPIView
+from rest_framework.generics import GenericAPIView, ListAPIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework_simplejwt.tokens import RefreshToken
@@ -11,6 +11,7 @@ from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
 from rest_framework_simplejwt.tokens import AccessToken
+from django.contrib.auth import get_user_model
 
 
 class RegisterView(APIView):
@@ -66,14 +67,17 @@ class UserProfileView(APIView):
         }, status=status.HTTP_200_OK)
     
 
-class UserListView(APIView):
+# class UserListView(APIView):
+class UserListView(ListAPIView):
+    permission_classes = [IsAuthenticated]
+    queryset = get_user_model().objects.all()
     """
     Получение списка всех пользователей.
     """
-    def get(self, request):
-        users = User.objects.all()
-        users_data = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
-        return Response(users_data, status=status.HTTP_200_OK)
+    # def get(self, request):
+    #     users = User.objects.all()
+    #     users_data = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
+    #     return Response(users_data, status=status.HTTP_200_OK)
 
 
 class UserDetailView(APIView):
