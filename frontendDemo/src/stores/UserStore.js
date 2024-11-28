@@ -18,6 +18,8 @@ class UserStore{
         try {
             const response = await UserService.profile();
             console.log(response);
+            console.log(response.data);
+            console.log(response.status);
             return response;
         } catch (error) {
             

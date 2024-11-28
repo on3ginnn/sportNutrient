@@ -45,6 +45,8 @@ export default class UserService{
                 }
             });
             console.log(response.data);
+            console.log(response.status)
+
             return response.data;
         } catch (error) {
             console.error(error.response.data.message);

@@ -20,9 +20,9 @@ const Register = observer(()=>{
 
     const submitForm = async (ev)=>{
         ev.preventDefault();
-        if(await userStore.addUser(data)){
+        await userStore.addUser(data).then(()=>{
             navigate('/login');
-        }
+        });
     }
     return(
         <Container>
