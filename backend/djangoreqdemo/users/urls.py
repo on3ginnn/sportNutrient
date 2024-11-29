@@ -8,5 +8,5 @@ urlpatterns = [
     path('users/', users.views.UserListAPIView.as_view(), name='list'),
     path('profile/', users.views.UserProfileAPIView.as_view(), name='profile'),
     path('user/<int:pk>/', users.views.UserDetailUpdateDeleteAPIView.as_view(), name='concrete'),
-    path('users/search/', users.views.UserSearchView.as_view(), name='search'),
+    path('user/search/', users.views.UserSearchAPIView.as_view(), name='search'),
 ]
