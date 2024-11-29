@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
-from users.serializer import UserSerializer
 from rest_framework.views import APIView
 from rest_framework.generics import ListAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.response import Response
@@ -11,6 +10,8 @@ from django.contrib.auth.hashers import make_password
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt import views as jwt_views
 from django.contrib.auth import get_user_model
+
+from users.serializer import UserSerializer
 
 
 class UserRegisterAPIView(APIView):
@@ -48,30 +49,18 @@ class UserProfileAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-
-        print(request.headers)
-        print(request.user)
-        print(request.auth)
         user = request.user
+
         return Response({
             "username": user.username,
             "email": user.email
         }, status=status.HTTP_200_OK)
     
 
-# class UserListView(APIView):
 class UserListAPIView(ListAPIView):
     permission_classes = [IsAuthenticated]
     queryset = get_user_model().objects.all()
     serializer_class = UserSerializer
-
-    """
-    Получение списка всех пользователей.
-    """
-    # def get(self, request):
-    #     users = User.objects.all()
-    #     users_data = [{"id": user.id, "username": user.username, "email": user.email} for user in users]
-    #     return Response(users_data, status=status.HTTP_200_OK)
 
 
 class UserDetailUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
