@@ -69,24 +69,13 @@ class UserDetailUpdateDeleteAPIView(RetrieveUpdateDestroyAPIView):
     serializer_class = UserSerializer
     
 
-class UserSearchView(APIView):
-    """
-    Поиск пользователя по username, переданному в заголовке 'username'.
-    """
-    def get(self, request):
-        username = request.query_params.get('username')
 
-        if not username:
-            return Response({"ошибка": "юзернейм не передан."}, status=status.HTTP_400_BAD_REQUEST)
+class UserSearchAPIView(RetrieveAPIView):
+    queryset = get_user_model().objects.all()
+    serializer_class = UserSerializer
+    lookup_field = "username"
+    
+    def retrieve(self, request, *args, **kwargs):
+        self.kwargs = {"username":request.GET.get("username")}
 
-        user = User.objects.filter(username=username).first()
-
-        if not user:
-            return Response({"ошибка": "юзер не найдет"}, status=status.HTTP_404_NOT_FOUND)
-
-        user_data = {
-            "id": user.id,
-            "username": user.username,
-            "email": user.email
-        }
-        return Response(user_data, status=status.HTTP_200_OK)
+        return super().retrieve(request, *args, **kwargs)
