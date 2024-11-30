@@ -22,8 +22,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
 
     "users.apps.UsersConfig",
-    "category.apps.CategoryConfig",
-    "product.apps.ProductConfig",
+    "nutrient.apps.NutrientConfig",
 
 ]
 
