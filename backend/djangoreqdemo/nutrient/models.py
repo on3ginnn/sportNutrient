@@ -1,10 +1,20 @@
 import django.core
 import django.db.models
+import django.contrib.auth
 
 
 class Nutrient(
     django.db.models.Model,
 ):
+    publisher = django.db.models.ForeignKey(
+        django.contrib.auth.get_user_model(),
+        verbose_name="Автор",
+        on_delete=django.db.models.CASCADE,
+        related_name="publisher",
+        related_query_name="publisher",
+        default=None,
+        help_text="Выберите автора",
+    )
     
     title = django.db.models.CharField(
         max_length=150,

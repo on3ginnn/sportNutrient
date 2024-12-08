@@ -6,10 +6,10 @@ import nutrient.models
 class NutrientCreateSerializer(serializers.ModelSerializer):
     class Meta:
         model = nutrient.models.Nutrient
-        fields = ['title', 'proteins', "fats", 'carbohydrates']
+        fields = ['title', 'proteins', "fats", 'carbohydrates', 'publisher']
 
 
 class NutrientSerializer(serializers.ModelSerializer):
     class Meta:
         model = nutrient.models.Nutrient
-        fields = ['id', 'title', 'proteins', "fats", 'carbohydrates']
+        fields = ['id', 'title', 'proteins', "fats", 'carbohydrates', 'publisher']
